@@ -1,17 +1,16 @@
 CC=gcc
 CFLAGS = -g
-OBJS=coroutine.o  server.o
-TARGET=server client
+S=coroutine.o example_server.o
+C=coroutine.o example_client.o
+.PHONY: server
+server: ${S}
+	$(CC) -o example_server ${S}
 
-all : $(TARGET)
-
-server:$(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
-
-client:
-	$(CC) $(CFLAGS) client.c -o client
+.PHONY: client
+client: ${C}
+	$(CC) -o example_client ${C}
 
 .PHONY: clean
 clean :
-	rm -rf *.o $(TARGET)
+	rm -rf *.o
 

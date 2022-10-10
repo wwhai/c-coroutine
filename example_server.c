@@ -10,10 +10,10 @@
 #include "coroutine.h"
 static int co_ids[COROUTINE_SIZE];
 
-void SetNoBlock(int fd) 
+void SetNoBlock(int fd)
 {
 	int flag = fcntl(fd, F_GETFL, 0);
-	
+
 	flag |= O_NONBLOCK;
 	fcntl(fd, F_SETFL, flag);
 }
@@ -26,35 +26,35 @@ int socket_init()
 		perror("socket.\n");
 		exit(1);
 	}
-	
+
 	int op = 1;
 	setsockopt(lst_fd, SOL_SOCKET, SO_REUSEADDR, &op, sizeof(op));
 
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(9200);
-	addr.sin_addr.s_addr = inet_addr("192.168.0.128");
+	addr.sin_addr.s_addr = inet_addr("0.0.0.0");
 
 	if(bind(lst_fd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
 	{
 		perror("bind.\n");
 		exit(1);
 	}
-	
+
 	if(listen(lst_fd, SOMAXCONN) < 0)
-	{	
+	{
 		perror("listen.\n");
 		exit(1);
 	}
 	return lst_fd;
 }
 
-void accept_conn(int lst_fd, schedule *s, int* co_ids, void *(*call_back)(schedule *s, void *args)) 
+void accept_conn(int lst_fd, schedule *s, int* co_ids, void *(*call_back)(schedule *s, void *args))
 {
 	while(1)
 	{
 		int new_fd = accept(lst_fd, NULL, NULL);
-		//Èç¹ûÓÐÐÂÁ¬½Óµ½À´Ôò´´½¨Ò»¸öÐ­³ÌÀ´¹ÜÀíÕâ¸öÁ¬½Ó
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ò´´½ï¿½Ò»ï¿½ï¿½Ð­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(new_fd > 0)
 		{
 			SetNoBlock(new_fd);
@@ -70,7 +70,7 @@ void accept_conn(int lst_fd, schedule *s, int* co_ids, void *(*call_back)(schedu
 			co_ids[cid] = 1;
 			coroutine_running(s, cid);
 		}
-		//Èç¹ûµ±Ç°Ã»ÓÐÁ¬½Ó£¬ÔòÇÐ»»ÖÁÐ­³ÌÉÏÏÂÎÄÖÐ¼ÌÐøÔËÐÐ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½Ð­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		else
 		{
 			int i = 0;
@@ -98,15 +98,15 @@ void *handle(schedule  *s, void *args)
 		memset(buf, 0, sizeof(buf));
 
 		int ret = recv(cfd, buf, 1024, 0);
-		
+
 		if(ret < 0)
 		{
-			//Èç¹û´ËÊ±Ã»ÓÐÊý¾Ý£¬Ôò²»ÔÙµÈ´ý£¬Ö±½ÓÇÐ»»»ØÖ÷Á÷³Ì
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ÙµÈ´ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			coroutine_yield(s);
 		}
 		else if(ret == 0)
 		{
-			//Í¨ÐÅ½áÊø
+			//Í¨ï¿½Å½ï¿½ï¿½ï¿½
 			co_ids[s->cur_id] = -1;
 			break;
 		}
@@ -131,7 +131,7 @@ int main()
 	SetNoBlock(lst_fd);
 
 	schedule* s = schedule_create();
-	
+
 	int i;
 	for(i = 0; i < COROUTINE_SIZE; i++)
 	{

@@ -11,7 +11,7 @@ int main( void ) {
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(9200);
-	addr.sin_addr.s_addr = inet_addr("192.168.0.128");
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	int ret = connect(fd, (struct sockaddr*)&addr, sizeof(addr));
 	if ( ret == -1 )
@@ -19,7 +19,7 @@ int main( void ) {
 		perror("connect.\n");
 		exit(1);
 	}
-	
+
 	char buf[1024] = {};
 	while(fgets(buf, 1024, stdin) != NULL)
 	{
